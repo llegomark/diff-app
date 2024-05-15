@@ -60,6 +60,70 @@ To run the Diff App locally, follow these steps:
 4. The differences between the two pieces of text will be highlighted in the result box.
 5. The total number of characters and words for each input box will be displayed below the respective input box.
 
+## Todo
+
+### Accessibility
+- [ ] Implement keyboard navigation support for radio buttons
+- [ ] Ensure input boxes and diff result section are focusable and keyboard-accessible
+- [ ] Add keyboard shortcuts for common actions (e.g., copying diff result, resetting input)
+- [ ] Conduct thorough accessibility testing with screen readers and keyboard navigation
+- [ ] Provide detailed instructions or a help section for using the app with assistive technologies
+
+### Responsive Design
+- [ ] Optimize layout for smaller screens (adjust font sizes, padding, margins)
+- [ ] Use a responsive grid system or CSS flexbox for a more flexible layout
+
+### Diff Customization
+- [ ] Allow customization of diff highlighting colors for added, removed, and unchanged text
+- [ ] Provide options to toggle line numbers or display a side-by-side diff view
+- [ ] Add a settings panel or menu to control customization options
+
+### File Upload and Download
+- [ ] Implement file upload feature for comparing text files
+- [ ] Add a "Download Diff" button to generate a downloadable file with the diff result
+
+### Diff Statistics
+- [ ] Display statistics about the diff (number of added, removed, and unchanged lines/words)
+- [ ] Calculate and show the percentage of similarity between the input texts
+
+### Undo/Redo Functionality
+- [ ] Implement undo/redo feature for changes made to the input boxes
+- [ ] Keep track of edit history and provide buttons or shortcuts to navigate undo/redo stack
+
+### Syntax Highlighting
+- [ ] Enhance diff result with syntax highlighting based on language or format of input text
+- [ ] Integrate a syntax highlighting library or use a syntax highlighting service
+
+### Performance Optimization
+- [ ] Implement lazy loading for additional libraries or resources
+- [ ] Optimize diff algorithm or explore alternative diff libraries for handling large input texts
+- [ ] Minimize DOM manipulations and consider using virtual DOM techniques for faster rendering
+
+### User Feedback and Error Handling
+- [ ] Display user-friendly error messages or notifications for issues with input or diff processing
+- [ ] Provide a feedback mechanism for users to report bugs, suggest improvements, or seek assistance
+
+### Documentation
+- [ ] Update README.md with detailed installation, usage, and configuration instructions
+- [ ] Add contributing guidelines and code of conduct for potential contributors
+- [ ] Include screenshots or GIFs showcasing the app's features and functionality
+
+### Testing
+- [ ] Implement unit tests for critical functions and components
+- [ ] Write end-to-end tests to ensure the app works as expected
+- [ ] Set up continuous integration and continuous deployment (CI/CD) pipelines
+
+### Deployment
+- [ ] Prepare the app for production deployment
+- [ ] Configure necessary build tools and optimizations
+- [ ] Set up hosting and deployment infrastructure
+- [ ] Ensure the app is deployed securely and efficiently
+
+### Maintenance
+- [ ] Regularly update dependencies and libraries to their latest stable versions
+- [ ] Monitor and address any reported bugs or issues
+- [ ] Plan and implement future enhancements and features based on user feedback and requirements
+
 ## Contributing
 
 Contributions are welcome! If you have any ideas, suggestions, or bug reports, please open an issue or submit a pull request. Make sure to follow the existing code style and conventions.
