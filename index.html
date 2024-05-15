@@ -12,36 +12,45 @@
   <div class="container mx-auto px-4 py-6 min-h-screen flex flex-col">
     <header class="mb-4">
       <h1 class="text-2xl font-bold mb-2">Diff App</h1>
-      <div class="flex flex-wrap">
-        <label class="mr-4">
-          <input type="radio" name="diff_type" value="diffChars"> Chars
-        </label>
-        <label class="mr-4">
-          <input type="radio" name="diff_type" value="diffWords" checked> Words
-        </label>
-        <label>
-          <input type="radio" name="diff_type" value="diffLines"> Lines
-        </label>
+      <div class="flex flex-wrap" role="radiogroup" aria-label="Diff Type">
+        <div class="mr-4">
+          <input type="radio" id="diffChars" name="diff_type" value="diffChars">
+          <label for="diffChars">Chars</label>
+        </div>
+        <div class="mr-4">
+          <input type="radio" id="diffWords" name="diff_type" value="diffWords" checked>
+          <label for="diffWords">Words</label>
+        </div>
+        <div>
+          <input type="radio" id="diffLines" name="diff_type" value="diffLines">
+          <label for="diffLines">Lines</label>
+        </div>
       </div>
     </header>
 
     <main class="grid grid-cols-1 md:grid-cols-3 gap-4 flex-grow">
-      <div class="flex flex-col">
-        <textarea id="input1" class="w-full flex-grow p-2 border border-gray-300 rounded font-mono text-sm"></textarea>
+      <section class="flex flex-col">
+        <h2 class="sr-only">Input 1</h2>
+        <textarea id="input1" class="w-full flex-grow p-2 border border-gray-300 rounded font-mono text-sm"
+          aria-label="Input 1"></textarea>
         <div class="mt-2 text-sm">
-          <span id="input1CharCount">0</span> characters, <span id="input1WordCount">0</span> words
+          <span id="input1CharCount">0</span>, <span id="input1WordCount">0</span>
         </div>
-      </div>
-      <div class="flex flex-col">
-        <textarea id="input2" class="w-full flex-grow p-2 border border-gray-300 rounded font-mono text-sm"></textarea>
+      </section>
+      <section class="flex flex-col">
+        <h2 class="sr-only">Input 2</h2>
+        <textarea id="input2" class="w-full flex-grow p-2 border border-gray-300 rounded font-mono text-sm"
+          aria-label="Input 2"></textarea>
         <div class="mt-2 text-sm">
-          <span id="input2CharCount">0</span> characters, <span id="input2WordCount">0</span> words
+          <span id="input2CharCount">0</span>, <span id="input2WordCount">0</span>
         </div>
-      </div>
-      <div class="flex flex-col">
+      </section>
+      <section class="flex flex-col">
+        <h2 class="sr-only">Diff Result</h2>
         <pre id="result"
-          class="w-full result-box p-2 border border-gray-300 rounded font-mono text-sm whitespace-pre-wrap"></pre>
-      </div>
+          class="w-full result-box p-2 border border-gray-300 rounded font-mono text-sm whitespace-pre-wrap"
+          aria-live="polite"></pre>
+      </section>
     </main>
 
     <footer class="mt-4 mb-2 text-center text-gray-500 text-sm">

@@ -93,14 +93,20 @@ function countChars(text) {
 }
 
 function countWords(text) {
-    return text.trim().split(/\s+/).length;
+    return text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
 }
 
 function updateCounts() {
-    input1CharCount.textContent = countChars(input1.value);
-    input1WordCount.textContent = countWords(input1.value);
-    input2CharCount.textContent = countChars(input2.value);
-    input2WordCount.textContent = countWords(input2.value);
+    const counts = [
+        { element: input1CharCount, count: countChars(input1.value), singular: 'character' },
+        { element: input1WordCount, count: countWords(input1.value), singular: 'word' },
+        { element: input2CharCount, count: countChars(input2.value), singular: 'character' },
+        { element: input2WordCount, count: countWords(input2.value), singular: 'word' }
+    ];
+
+    counts.forEach(({ element, count, singular }) => {
+        element.textContent = `${count} ${count === 1 || count === 0 ? singular : singular + 's'}`;
+    });
 }
 
 const debouncedPerformDiff = debounce(performDiff, 300);
