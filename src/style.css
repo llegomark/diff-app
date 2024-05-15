@@ -22,7 +22,7 @@ textarea {
 
 .result-box {
   height: calc(100% - 1.7rem);
-  overflow-y: hidden;
+  overflow-y: auto;
 }
 
 #input1,

@@ -83,8 +83,8 @@ To run the Diff App locally, follow these steps:
 - [ ] Add a "Download Diff" button to generate a downloadable file with the diff result
 
 ### Diff Statistics
-- [ ] Display statistics about the diff (number of added, removed, and unchanged lines/words)
-- [ ] Calculate and show the percentage of similarity between the input texts
+- [x] Display statistics about the diff (number of added, removed, and unchanged lines/words)
+- [x] Calculate and show the percentage of similarity between the input texts
 
 ### Undo/Redo Functionality
 - [ ] Implement undo/redo feature for changes made to the input boxes

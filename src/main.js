@@ -56,17 +56,31 @@ async function loadDiffLibrary() {
     return diffLibrary;
 }
 
-async function performDiff() {
-    const diffType = [...diffTypeRadios].find((radio) => radio.checked).value;
-    const input1Value = input1.value;
-    const input2Value = input2.value;
+function tokenize(text) {
+    return text.split(/\s+/);
+}
 
-    const cacheKey = `${diffType}-${input1Value}-${input2Value}`;
-    if (diffCache.has(cacheKey)) {
-        result.innerHTML = diffCache.get(cacheKey);
-        return;
+function createBigrams(tokens) {
+    const bigrams = new Set();
+    for (let i = 0; i < tokens.length - 1; i++) {
+        bigrams.add(`${tokens[i]} ${tokens[i + 1]}`);
     }
+    return bigrams;
+}
 
+function calculateDiceSorensenCoefficient(text1, text2) {
+    const tokens1 = tokenize(text1);
+    const tokens2 = tokenize(text2);
+    const bigrams1 = createBigrams(tokens1);
+    const bigrams2 = createBigrams(tokens2);
+
+    const intersection = new Set([...bigrams1].filter(bigram => bigrams2.has(bigram)));
+    const union = new Set([...bigrams1, ...bigrams2]);
+
+    return (2 * intersection.size) / union.size;
+}
+
+async function performDiffAsync(input1Value, input2Value, diffType) {
     const { diffChars, diffWords, diffLines } = await loadDiffLibrary();
 
     const diffFunctions = {
@@ -78,14 +92,69 @@ async function performDiff() {
     const diff = diffFunctions[diffType](input1Value, input2Value);
 
     let diffHTML = '';
+    let addedCount = 0;
+    let removedCount = 0;
+    let unchangedCount = 0;
+
     diff.forEach((part) => {
-        const className = part.added ? 'added' : part.removed ? 'removed' : '';
-        diffHTML += `<span class="${className}">${part.value}</span>`;
+        if (part.added) {
+            addedCount++;
+            diffHTML += `<span class="added">${part.value}</span>`;
+        } else if (part.removed) {
+            removedCount++;
+            diffHTML += `<span class="removed">${part.value}</span>`;
+        } else {
+            unchangedCount++;
+            diffHTML += part.value;
+        }
     });
 
-    result.innerHTML = diffHTML;
+    const totalCount = addedCount + removedCount + unchangedCount;
+    const similarityPercentage = (calculateDiceSorensenCoefficient(input1Value, input2Value) * 100).toFixed(2);
 
-    diffCache.set(cacheKey, diffHTML);
+    const stats = {
+        addedCount,
+        removedCount,
+        unchangedCount,
+        totalCount,
+        similarityPercentage: Math.min(similarityPercentage, 100),
+    };
+
+    return { diffHTML, stats };
+}
+
+function displayDiffResults(diffHTML) {
+    result.innerHTML = diffHTML;
+}
+
+function updateDiffStats(stats) {
+    const { addedCount, removedCount, unchangedCount, totalCount, similarityPercentage } = stats;
+
+    document.getElementById('addedCount').textContent = addedCount;
+    document.getElementById('removedCount').textContent = removedCount;
+    document.getElementById('unchangedCount').textContent = unchangedCount;
+    document.getElementById('totalCount').textContent = totalCount;
+    document.getElementById('similarityPercentage').textContent = `${similarityPercentage}%`;
+}
+
+async function performDiff() {
+    const diffType = [...diffTypeRadios].find((radio) => radio.checked).value;
+    const input1Value = input1.value;
+    const input2Value = input2.value;
+
+    const cacheKey = `${diffType}-${input1Value}-${input2Value}`;
+    if (diffCache.has(cacheKey)) {
+        const { diffHTML, stats } = diffCache.get(cacheKey);
+        displayDiffResults(diffHTML);
+        updateDiffStats(stats);
+        return;
+    }
+
+    const { diffHTML, stats } = await performDiffAsync(input1Value, input2Value, diffType);
+
+    diffCache.set(cacheKey, { diffHTML, stats });
+    displayDiffResults(diffHTML);
+    updateDiffStats(stats);
 }
 
 function countChars(text) {
