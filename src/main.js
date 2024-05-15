@@ -56,8 +56,16 @@ async function loadDiffLibrary() {
     return diffLibrary;
 }
 
-function tokenize(text) {
+function tokenizeChars(text) {
+    return text.split('');
+}
+
+function tokenizeWords(text) {
     return text.split(/\s+/);
+}
+
+function tokenizeLines(text) {
+    return text.split(/\r?\n/);
 }
 
 function createBigrams(tokens) {
@@ -68,14 +76,34 @@ function createBigrams(tokens) {
     return bigrams;
 }
 
-function calculateDiceSorensenCoefficient(text1, text2) {
-    const tokens1 = tokenize(text1);
-    const tokens2 = tokenize(text2);
-    const bigrams1 = createBigrams(tokens1);
-    const bigrams2 = createBigrams(tokens2);
+function calculateDiceSorensenCoefficient(text1, text2, diffType) {
+    let tokens1, tokens2;
 
-    const intersection = new Set([...bigrams1].filter(bigram => bigrams2.has(bigram)));
-    const union = new Set([...bigrams1, ...bigrams2]);
+    switch (diffType) {
+        case 'diffChars':
+            tokens1 = tokenizeChars(text1);
+            tokens2 = tokenizeChars(text2);
+            break;
+        case 'diffWords':
+            { tokens1 = tokenizeWords(text1);
+            tokens2 = tokenizeWords(text2);
+            // Only calculate bigrams for word-level comparisons
+            const bigrams1 = createBigrams(tokens1);
+            const bigrams2 = createBigrams(tokens2);
+            const intersection = new Set([...bigrams1].filter(bigram => bigrams2.has(bigram)));
+            const union = new Set([...bigrams1, ...bigrams2]);
+            return (2 * intersection.size) / union.size; }
+        case 'diffLines':
+            tokens1 = tokenizeLines(text1);
+            tokens2 = tokenizeLines(text2);
+            break;
+        default:
+            throw new Error(`Unsupported diff type: ${diffType}`);
+    }
+
+    // For character and line comparisons, directly compare the tokens:
+    const intersection = new Set([...tokens1].filter(token => tokens2.includes(token)));
+    const union = new Set([...tokens1, ...tokens2]);
 
     return (2 * intersection.size) / union.size;
 }
@@ -110,7 +138,13 @@ async function performDiffAsync(input1Value, input2Value, diffType) {
     });
 
     const totalCount = addedCount + removedCount + unchangedCount;
-    const similarityPercentage = (calculateDiceSorensenCoefficient(input1Value, input2Value) * 100).toFixed(2);
+    const similarityPercentage = (calculateDiceSorensenCoefficient(input1Value, input2Value, diffType) * 100).toFixed(2);
+
+    const similarityThreshold = 0.8;
+
+    if (similarityPercentage >= similarityThreshold * 100) {
+        diffHTML += `<div class="similarity-message">The texts are highly similar (${similarityPercentage}% similarity).</div>`;
+    }
 
     const stats = {
         addedCount,
