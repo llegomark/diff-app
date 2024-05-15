@@ -1,0 +1,98 @@
+import { diffChars, diffWords, diffLines } from 'diff';
+
+const input1 = document.getElementById('input1');
+const input2 = document.getElementById('input2');
+const result = document.getElementById('result');
+const diffTypeRadios = document.getElementsByName('diff_type');
+const input1CharCount = document.getElementById('input1CharCount');
+const input1WordCount = document.getElementById('input1WordCount');
+const input2CharCount = document.getElementById('input2CharCount');
+const input2WordCount = document.getElementById('input2WordCount');
+
+function setInitialText() {
+    input1.value = `Once upon a time, there was a curious developer named Lina who discovered the power of diff. She learned that diff is a tool that compares two pieces of text and highlights the differences between them.
+  
+  Lina experimented with different types of diffs. She started with character-level diffs, which compare the text character by character. She noticed that even the slightest change, like adding or removing a single letter, would be detected and highlighted.
+  
+  Next, Lina explored word-level diffs. This time, diff compared the text word by word. It identified added, removed, or modified words, making it easier to spot meaningful changes in the text.
+  
+  Finally, Lina tried line-level diffs. This mode compared the text line by line, ignoring minor differences within the lines. It was perfect for comparing larger chunks of text or code.
+  
+  Lina was amazed by the power and flexibility of diff. She realized that diff is an essential tool for tracking changes, collaborating with others, and maintaining version control. From that day on, Lina embraced diff and used it to enhance her development workflow.
+  
+  The end.`;
+
+    input2.value = `Once upon a time, there was a curious developer named Lina who discovered the magic of diff. She learned that diff is a powerful tool that compares two pieces of text and highlights the differences between them.
+  
+  Lina experimented with various types of diffs. She began with character-level diffs, which compare the text character by character. She noticed that even the tiniest change, like adding or removing a single letter, would be detected and emphasized.
+  
+  Next, Lina explored word-level diffs. This time, diff compared the text word by word. It identified added, removed, or modified words, making it easier to spot significant changes in the text.
+  
+  Lastly, Lina tried line-level diffs. This mode compared the text line by line, ignoring minor differences within the lines. It was perfect for comparing larger chunks of text or code.
+  
+  Lina was fascinated by the power and versatility of diff. She realized that diff is a crucial tool for tracking changes, collaborating with others, and maintaining version control. From that day forward, Lina embraced diff and used it to streamline her development workflow.
+  
+  The end.`;
+}
+
+function performDiff() {
+    const diffType = [...diffTypeRadios].find(radio => radio.checked).value;
+    let diff;
+
+    switch (diffType) {
+        case 'diffChars':
+            diff = diffChars(input1.value, input2.value);
+            break;
+        case 'diffWords':
+            diff = diffWords(input1.value, input2.value);
+            break;
+        case 'diffLines':
+            diff = diffLines(input1.value, input2.value);
+            break;
+        default:
+            diff = [];
+    }
+
+    const fragment = document.createDocumentFragment();
+
+    diff.forEach((part) => {
+        const span = document.createElement('span');
+        span.className = part.added ? 'added' : part.removed ? 'removed' : '';
+        span.appendChild(document.createTextNode(part.value));
+        fragment.appendChild(span);
+    });
+
+    result.textContent = '';
+    result.appendChild(fragment);
+}
+
+function countChars(text) {
+    return text.length;
+}
+
+function countWords(text) {
+    return text.trim().split(/\s+/).length;
+}
+
+function updateCounts() {
+    input1CharCount.textContent = countChars(input1.value);
+    input1WordCount.textContent = countWords(input1.value);
+    input2CharCount.textContent = countChars(input2.value);
+    input2WordCount.textContent = countWords(input2.value);
+}
+
+input1.addEventListener('input', () => {
+    performDiff();
+    updateCounts();
+});
+
+input2.addEventListener('input', () => {
+    performDiff();
+    updateCounts();
+});
+
+diffTypeRadios.forEach(radio => radio.addEventListener('change', performDiff));
+
+setInitialText();
+performDiff();
+updateCounts();

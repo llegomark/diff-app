@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diff App</title>
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+
+<body>
+  <div class="container mx-auto px-4 py-6 min-h-screen flex flex-col">
+    <header class="mb-4">
+      <h1 class="text-2xl font-bold mb-2">Diff App</h1>
+      <div class="flex flex-wrap">
+        <label class="mr-4">
+          <input type="radio" name="diff_type" value="diffChars"> Chars
+        </label>
+        <label class="mr-4">
+          <input type="radio" name="diff_type" value="diffWords" checked> Words
+        </label>
+        <label>
+          <input type="radio" name="diff_type" value="diffLines"> Lines
+        </label>
+      </div>
+    </header>
+
+    <main class="grid grid-cols-1 md:grid-cols-3 gap-4 flex-grow">
+      <div class="flex flex-col">
+        <textarea id="input1" class="w-full flex-grow p-2 border border-gray-300 rounded font-mono text-sm"></textarea>
+        <div class="mt-2 text-sm">
+          <span id="input1CharCount">0</span> characters, <span id="input1WordCount">0</span> words
+        </div>
+      </div>
+      <div class="flex flex-col">
+        <textarea id="input2" class="w-full flex-grow p-2 border border-gray-300 rounded font-mono text-sm"></textarea>
+        <div class="mt-2 text-sm">
+          <span id="input2CharCount">0</span> characters, <span id="input2WordCount">0</span> words
+        </div>
+      </div>
+      <div class="flex flex-col">
+        <pre id="result"
+          class="w-full result-box p-2 border border-gray-300 rounded font-mono text-sm whitespace-pre-wrap overflow-auto"></pre>
+      </div>
+    </main>
+
+    <footer class="mt-4 mb-2 text-center text-gray-500 text-sm">
+      &copy; 2024 <a href="https://llego.dev/" target="_blank" rel="noopener noreferrer"
+        class="text-blue-500 hover:underline">Mark Anthony Llego</a>
+    </footer>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>
