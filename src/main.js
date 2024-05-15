@@ -52,12 +52,8 @@ async function loadDiffLibrary() {
     return diffLibrary;
 }
 
-function tokenizeChars(text) {
-    return text.split('');
-}
-
-function tokenizeWords(text) {
-    return text.split(/\s+/);
+function tokenize(text, pattern = /\s+/) {
+    return text.split(pattern);
 }
 
 function createBigrams(tokens) {
@@ -68,45 +64,58 @@ function createBigrams(tokens) {
     return bigrams;
 }
 
-function calculateDiceSorensenCoefficient(text1, text2, diffType) {
-    let tokens1, tokens2;
-
-    switch (diffType) {
-        case 'diffChars':
-            tokens1 = tokenizeChars(text1);
-            tokens2 = tokenizeChars(text2);
-            break;
-        case 'diffWords':
-            { tokens1 = tokenizeWords(text1);
-            tokens2 = tokenizeWords(text2);
-            // Only calculate bigrams for word-level comparisons
+const diffStrategies = {
+    diffChars: {
+        tokenize: (text) => tokenize(text, ''),
+        calculateSimilarity: (tokens1, tokens2) => {
+            const intersection = new Set([...tokens1].filter(token => tokens2.includes(token)));
+            const union = new Set([...tokens1, ...tokens2]);
+            return (2 * intersection.size) / union.size;
+        },
+    },
+    diffWords: {
+        tokenize: (text) => tokenize(text),
+        calculateSimilarity: (tokens1, tokens2) => {
             const bigrams1 = createBigrams(tokens1);
             const bigrams2 = createBigrams(tokens2);
             const intersection = new Set([...bigrams1].filter(bigram => bigrams2.has(bigram)));
             const union = new Set([...bigrams1, ...bigrams2]);
-            return (2 * intersection.size) / union.size; }
-        default:
-            throw new Error(`Unsupported diff type: ${diffType}`);
-    }
+            return (2 * intersection.size) / union.size;
+        },
+    },
+};
 
-    // For character comparisons, directly compare the tokens:
-    const intersection = new Set([...tokens1].filter(token => tokens2.includes(token)));
-    const union = new Set([...tokens1, ...tokens2]);
-
-    return (2 * intersection.size) / union.size;
+function calculateDiceSorensenCoefficient(text1, text2, diffType) {
+    const strategy = diffStrategies[diffType];
+    const tokens1 = strategy.tokenize(text1);
+    const tokens2 = strategy.tokenize(text2);
+    return strategy.calculateSimilarity(tokens1, tokens2);
 }
 
-async function performDiffAsync(input1Value, input2Value, diffType) {
-    const { diffChars, diffWords } = await loadDiffLibrary();
-
+async function calculateDiff(input1Value, input2Value, diffType, diffLibrary) {
     const diffFunctions = {
-        diffChars,
-        diffWords,
+        diffChars: diffLibrary.diffChars,
+        diffWords: diffLibrary.diffWords,
     };
 
-    const diff = diffFunctions[diffType](input1Value, input2Value);
+    return diffFunctions[diffType](input1Value, input2Value);
+}
 
+function generateDiffHTML(diff) {
     let diffHTML = '';
+    diff.forEach((part) => {
+        if (part.added) {
+            diffHTML += `<span class="added">${part.value}</span>`;
+        } else if (part.removed) {
+            diffHTML += `<span class="removed">${part.value}</span>`;
+        } else {
+            diffHTML += part.value;
+        }
+    });
+    return diffHTML;
+}
+
+function calculateDiffStats(diff) {
     let addedCount = 0;
     let removedCount = 0;
     let unchangedCount = 0;
@@ -114,24 +123,23 @@ async function performDiffAsync(input1Value, input2Value, diffType) {
     diff.forEach((part) => {
         if (part.added) {
             addedCount++;
-            diffHTML += `<span class="added">${part.value}</span>`;
         } else if (part.removed) {
             removedCount++;
-            diffHTML += `<span class="removed">${part.value}</span>`;
         } else {
             unchangedCount++;
-            diffHTML += part.value;
         }
     });
 
+    return { addedCount, removedCount, unchangedCount };
+}
+
+async function performDiffAsync(input1Value, input2Value, diffType) {
+    const diffLibrary = await loadDiffLibrary();
+    const diff = await calculateDiff(input1Value, input2Value, diffType, diffLibrary);
+    const diffHTML = generateDiffHTML(diff);
+    const { addedCount, removedCount, unchangedCount } = calculateDiffStats(diff);
     const totalCount = addedCount + removedCount + unchangedCount;
     const similarityPercentage = (calculateDiceSorensenCoefficient(input1Value, input2Value, diffType) * 100).toFixed(2);
-
-    const similarityThreshold = 0.8;
-
-    if (similarityPercentage >= similarityThreshold * 100) {
-        diffHTML += `<div class="similarity-message">The texts are highly similar (${similarityPercentage}% similarity) according to the <a href="https://en.wikipedia.org/wiki/Dice-S%C3%B8rensen_coefficient" target="_blank" rel="noopener noreferrer" class="similarity-link">Dice-Sørensen coefficient</a>.</div>`;
-    }
 
     const stats = {
         addedCount,
@@ -156,6 +164,16 @@ function updateDiffStats(stats) {
     document.getElementById('unchangedCount').textContent = unchangedCount;
     document.getElementById('totalCount').textContent = totalCount;
     document.getElementById('similarityPercentage').textContent = `${similarityPercentage}%`;
+
+    const similarityThreshold = 0.8;
+    const similarityMessage = document.getElementById('similarityMessage');
+
+    if (similarityPercentage >= similarityThreshold * 100) {
+        similarityMessage.innerHTML = `The texts are highly similar (${similarityPercentage}% similarity) according to the <a href="https://en.wikipedia.org/wiki/Dice-S%C3%B8rensen_coefficient" target="_blank" rel="noopener noreferrer" class="similarity-link">Dice-Sørensen coefficient</a>.`;
+        similarityMessage.classList.remove('hidden');
+    } else {
+        similarityMessage.classList.add('hidden');
+    }
 }
 
 async function performDiff() {
@@ -183,7 +201,7 @@ function countChars(text) {
 }
 
 function countWords(text) {
-    return text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+    return text.trim() === '' ? 0 : tokenize(text).length;
 }
 
 function updateCounts() {
