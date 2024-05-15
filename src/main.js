@@ -133,6 +133,29 @@ function calculateDiffStats(diff) {
     return { addedCount, removedCount, unchangedCount };
 }
 
+const keywords = [
+    "Delve", "Harnessing", "At the heart of", "In essence", "Facilitating",
+    "Intrinsic", "Integral", "Core", "Facet", "Nuance", "Culmination",
+    "Manifestation", "Inherent", "Confluence", "Underlying", "Intricacies",
+    "Epitomize", "Embodiment", "Iteration", "Synthesize", "Amplify",
+    "Impetus", "Catalyst", "Synergy", "Cohesive", "Paradigm", "Dynamics",
+    "Implications", "Prerequisite", "Fusion", "Holistic", "Quintessential",
+    "Cohesion", "Symbiosis", "Integration", "Encompass", "Unveil", "Unravel",
+    "Emanate", "Illuminate", "Reverberate", "Augment", "Infuse", "Extrapolate",
+    "Embody", "Unify", "Inflection", "Instigate", "Embark", "Envisage",
+    "Elucidate", "Substantiate", "Resonate", "Catalyze", "Resilience",
+    "Evoke", "Pinnacle", "Evolve", "Digital Bazaar", "Tapestry", "Leverage",
+    "Centerpiece", "Subtlety", "Immanent", "Exemplify", "Blend",
+    "Comprehensive", "Archetypal", "Unity", "Harmony", "Conceptualize",
+    "Reinforce", "Mosaic"
+];
+
+function detectAIText(text) {
+    const lowercaseText = text.toLowerCase();
+    const foundKeywords = keywords.filter(keyword => lowercaseText.includes(keyword.toLowerCase()));
+    return foundKeywords;
+}
+
 async function performDiffAsync(input1Value, input2Value, diffType) {
     const diffLibrary = await loadDiffLibrary();
     const diff = await calculateDiff(input1Value, input2Value, diffType, diffLibrary);
@@ -141,12 +164,17 @@ async function performDiffAsync(input1Value, input2Value, diffType) {
     const totalCount = addedCount + removedCount + unchangedCount;
     const similarityPercentage = (calculateDiceSorensenCoefficient(input1Value, input2Value, diffType) * 100).toFixed(2);
 
+    const aiKeywords1 = detectAIText(input1Value);
+    const aiKeywords2 = detectAIText(input2Value);
+
     const stats = {
         addedCount,
         removedCount,
         unchangedCount,
         totalCount,
         similarityPercentage: Math.min(similarityPercentage, 100),
+        aiKeywords1,
+        aiKeywords2,
     };
 
     return { diffHTML, stats };
@@ -157,7 +185,7 @@ function displayDiffResults(diffHTML) {
 }
 
 function updateDiffStats(stats) {
-    const { addedCount, removedCount, unchangedCount, totalCount, similarityPercentage } = stats;
+    const { addedCount, removedCount, unchangedCount, totalCount, similarityPercentage, aiKeywords1, aiKeywords2 } = stats;
 
     document.getElementById('addedCount').textContent = addedCount;
     document.getElementById('removedCount').textContent = removedCount;
@@ -174,7 +202,26 @@ function updateDiffStats(stats) {
     } else {
         similarityMessage.classList.add('hidden');
     }
-}
+
+    const aiKeywordsMessage1 = document.getElementById('aiKeywordsMessage1');
+    const aiKeywordsMessage2 = document.getElementById('aiKeywordsMessage2');
+    const aiKeywords1Element = document.getElementById('aiKeywords1');
+    const aiKeywords2Element = document.getElementById('aiKeywords2');
+  
+    if (aiKeywords1.length > 0) {
+      aiKeywords1Element.textContent = aiKeywords1.join(', ');
+      aiKeywordsMessage1.classList.remove('hidden');
+    } else {
+      aiKeywordsMessage1.classList.add('hidden');
+    }
+  
+    if (aiKeywords2.length > 0) {
+      aiKeywords2Element.textContent = aiKeywords2.join(', ');
+      aiKeywordsMessage2.classList.remove('hidden');
+    } else {
+      aiKeywordsMessage2.classList.add('hidden');
+    }
+  }
 
 async function performDiff() {
     const diffType = [...diffTypeRadios].find((radio) => radio.checked).value;

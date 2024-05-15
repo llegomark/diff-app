@@ -64,7 +64,7 @@
     </main>
 
     <section id="diffStats" class="mt-4 mb-2 text-center">
-      <div class="inline-flex items-center bg-blue-100 text-blue-800 px-4 py-2 rounded-md">
+      <div class="inline-flex items-center bg-blue-50 text-blue-800 px-4 py-2 rounded-md">
         <div class="mr-4">
           <p class="text-xl font-bold" id="similarityPercentage">0%</p>
           <p class="text-sm">Similarity</p>
@@ -87,6 +87,14 @@
             <p class="text-sm">Total</p>
           </div>
         </div>
+      </div>
+      <div id="aiKeywordsMessage1" class="mt-4 p-3 bg-slate-50 text-slate-800 rounded hidden">
+        <p class="text-sm font-medium">Input 1 may contain AI-generated text.</p>
+        <p class="text-xs text-slate-800">Keywords found: <span id="aiKeywords1"></span></p>
+      </div>
+      <div id="aiKeywordsMessage2" class="mt-2 p-3 bg-slate-50 text-slate-800 rounded hidden">
+        <p class="text-sm font-medium">Input 2 may contain AI-generated text.</p>
+        <p class="text-xs text-slate-800">Keywords found: <span id="aiKeywords2"></span></p>
       </div>
       <div id="similarityMessage" class="mt-2 text-sm text-blue-600 hidden"></div>
     </section>
