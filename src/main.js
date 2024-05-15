@@ -22,8 +22,6 @@ const INITIAL_TEXT_1 = `Once upon a time, there was a curious developer named Li
   
   Next, Lina explored word-level diffs. This time, diff compared the text word by word. It identified added, removed, or modified words, making it easier to spot meaningful changes in the text.
   
-  Finally, Lina tried line-level diffs. This mode compared the text line by line, ignoring minor differences within the lines. It was perfect for comparing larger chunks of text or code.
-  
   Lina was amazed by the power and flexibility of diff. She realized that diff is an essential tool for tracking changes, collaborating with others, and maintaining version control. From that day on, Lina embraced diff and used it to enhance her development workflow.
   
   But wait, there's more! Feel free to erase this story and unleash your own creativity. Start typing and let the diff magic begin!`;
@@ -33,8 +31,6 @@ const INITIAL_TEXT_2 = `Once upon a time, there was a curious developer named Li
   Lina experimented with various types of diffs. She began with character-level diffs, which compare the text character by character. She noticed that even the tiniest change, like adding or removing a single letter, would be detected and emphasized.
   
   Next, Lina explored word-level diffs. This time, diff compared the text word by word. It identified added, removed, or modified words, making it easier to spot significant changes in the text.
-  
-  Lastly, Lina tried line-level diffs. This mode compared the text line by line, ignoring minor differences within the lines. It was perfect for comparing larger chunks of text or code.
   
   Lina was fascinated by the power and versatility of diff. She realized that diff is a crucial tool for tracking changes, collaborating with others, and maintaining version control. From that day forward, Lina embraced diff and used it to streamline her development workflow.
   
@@ -64,10 +60,6 @@ function tokenizeWords(text) {
     return text.split(/\s+/);
 }
 
-function tokenizeLines(text) {
-    return text.split(/\r?\n/);
-}
-
 function createBigrams(tokens) {
     const bigrams = new Set();
     for (let i = 0; i < tokens.length - 1; i++) {
@@ -93,15 +85,11 @@ function calculateDiceSorensenCoefficient(text1, text2, diffType) {
             const intersection = new Set([...bigrams1].filter(bigram => bigrams2.has(bigram)));
             const union = new Set([...bigrams1, ...bigrams2]);
             return (2 * intersection.size) / union.size; }
-        case 'diffLines':
-            tokens1 = tokenizeLines(text1);
-            tokens2 = tokenizeLines(text2);
-            break;
         default:
             throw new Error(`Unsupported diff type: ${diffType}`);
     }
 
-    // For character and line comparisons, directly compare the tokens:
+    // For character comparisons, directly compare the tokens:
     const intersection = new Set([...tokens1].filter(token => tokens2.includes(token)));
     const union = new Set([...tokens1, ...tokens2]);
 
@@ -109,12 +97,11 @@ function calculateDiceSorensenCoefficient(text1, text2, diffType) {
 }
 
 async function performDiffAsync(input1Value, input2Value, diffType) {
-    const { diffChars, diffWords, diffLines } = await loadDiffLibrary();
+    const { diffChars, diffWords } = await loadDiffLibrary();
 
     const diffFunctions = {
         diffChars,
         diffWords,
-        diffLines,
     };
 
     const diff = diffFunctions[diffType](input1Value, input2Value);
@@ -143,7 +130,7 @@ async function performDiffAsync(input1Value, input2Value, diffType) {
     const similarityThreshold = 0.8;
 
     if (similarityPercentage >= similarityThreshold * 100) {
-        diffHTML += `<div class="similarity-message">The texts are highly similar (${similarityPercentage}% similarity).</div>`;
+        diffHTML += `<div class="similarity-message">The texts are highly similar (${similarityPercentage}% similarity) according to the <a href="https://en.wikipedia.org/wiki/Dice-S%C3%B8rensen_coefficient" target="_blank" rel="noopener noreferrer" class="similarity-link">Dice-Sørensen coefficient</a>.</div>`;
     }
 
     const stats = {
