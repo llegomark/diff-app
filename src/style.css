@@ -66,3 +66,8 @@ textarea {
 .similarity-link:hover {
   @apply text-blue-800;
 }
+
+#aiKeywordsMessage1,
+#aiKeywordsMessage2 {
+  @apply mt-2 text-sm text-slate-800;
+}
