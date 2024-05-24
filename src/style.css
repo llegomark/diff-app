@@ -71,3 +71,12 @@ textarea {
 #aiKeywordsMessage2 {
   @apply mt-2 text-sm text-slate-800;
 }
+
+#fileInput {
+  @apply mb-4;
+}
+
+#uploadButton1,
+#uploadButton2 {
+  @apply ml-2;
+}

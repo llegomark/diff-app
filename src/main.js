@@ -58,7 +58,6 @@ function tokenize(text, pattern = /\s+/) {
 
 function createBigrams(tokens) {
     const bigrams = new Set();
-    // Add this check to ensure at least two tokens exist
     if (tokens.length >= 2) {
         for (let i = 0; i < tokens.length - 1; i++) {
             bigrams.add(`${tokens[i]} ${tokens[i + 1]}`);
@@ -287,3 +286,74 @@ diffTypeRadios.forEach((radio) =>
 setInitialText();
 performDiff();
 updateCounts();
+
+const fileInput = document.getElementById('fileInput');
+const uploadButton = document.getElementById('uploadButton');
+let currentInputBox = input1;
+
+function showUploadButton() {
+    uploadButton.classList.remove('hidden');
+}
+
+function hideUploadButton() {
+    uploadButton.classList.add('hidden');
+}
+
+input1.addEventListener('click', () => {
+    currentInputBox = input1;
+    showUploadButton();
+});
+
+input2.addEventListener('click', () => {
+    currentInputBox = input2;
+    showUploadButton();
+});
+
+uploadButton.addEventListener('click', () => {
+    fileInput.click();
+});
+
+fileInput.addEventListener('change', handleFileUpload);
+
+async function handleFileUpload(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const fileExtension = file.name.split('.').pop().toLowerCase();
+        const fileSizeLimit = 1 * 1024 * 1024;
+
+        if (file.size > fileSizeLimit) {
+            alert('File size exceeds the 1MB limit. Please upload a smaller file.');
+            fileInput.value = '';
+            return;
+        }
+
+        if (fileExtension === 'txt' || fileExtension === 'md') {
+            try {
+                const fileContent = await readFileAsText(file);
+                currentInputBox.value = fileContent;
+                performDiff();
+                updateCounts();
+                hideUploadButton();
+            } catch (error) {
+                console.error('Error reading file:', error);
+                alert('An error occurred while reading the file. Please try again.');
+            }
+        } else {
+            alert('Please upload a .txt or .md file.');
+            fileInput.value = '';
+        }
+    }
+}
+
+function readFileAsText(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            resolve(event.target.result);
+        };
+        reader.onerror = (error) => {
+            reject(error);
+        };
+        reader.readAsText(file);
+    });
+}
