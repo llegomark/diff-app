@@ -58,8 +58,11 @@ function tokenize(text, pattern = /\s+/) {
 
 function createBigrams(tokens) {
     const bigrams = new Set();
-    for (let i = 0; i < tokens.length - 1; i++) {
-        bigrams.add(`${tokens[i]} ${tokens[i + 1]}`);
+    // Add this check to ensure at least two tokens exist
+    if (tokens.length >= 2) {
+        for (let i = 0; i < tokens.length - 1; i++) {
+            bigrams.add(`${tokens[i]} ${tokens[i + 1]}`);
+        }
     }
     return bigrams;
 }
@@ -207,21 +210,21 @@ function updateDiffStats(stats) {
     const aiKeywordsMessage2 = document.getElementById('aiKeywordsMessage2');
     const aiKeywords1Element = document.getElementById('aiKeywords1');
     const aiKeywords2Element = document.getElementById('aiKeywords2');
-  
+
     if (aiKeywords1.length > 0) {
-      aiKeywords1Element.textContent = aiKeywords1.join(', ');
-      aiKeywordsMessage1.classList.remove('hidden');
+        aiKeywords1Element.textContent = aiKeywords1.join(', ');
+        aiKeywordsMessage1.classList.remove('hidden');
     } else {
-      aiKeywordsMessage1.classList.add('hidden');
+        aiKeywordsMessage1.classList.add('hidden');
     }
-  
+
     if (aiKeywords2.length > 0) {
-      aiKeywords2Element.textContent = aiKeywords2.join(', ');
-      aiKeywordsMessage2.classList.remove('hidden');
+        aiKeywords2Element.textContent = aiKeywords2.join(', ');
+        aiKeywordsMessage2.classList.remove('hidden');
     } else {
-      aiKeywordsMessage2.classList.add('hidden');
+        aiKeywordsMessage2.classList.add('hidden');
     }
-  }
+}
 
 async function performDiff() {
     const diffType = [...diffTypeRadios].find((radio) => radio.checked).value;
