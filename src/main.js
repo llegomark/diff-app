@@ -53,12 +53,11 @@ async function loadDiffLibrary() {
 }
 
 function tokenize(text, pattern = /\s+/) {
-    return text.split(pattern);
+    return (text + ' ').split(pattern);
 }
 
 function createBigrams(tokens) {
     const bigrams = new Set();
-    // Add this check to ensure at least two tokens exist
     if (tokens.length >= 2) {
         for (let i = 0; i < tokens.length - 1; i++) {
             bigrams.add(`${tokens[i]} ${tokens[i + 1]}`);
