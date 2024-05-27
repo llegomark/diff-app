@@ -52,8 +52,15 @@ async function loadDiffLibrary() {
     return diffLibrary;
 }
 
+function normalizeText(text) {
+    text = text.toLowerCase();
+    text = text.replace(/[^\w\s]/g, '');
+    return text;
+}
+
 function tokenize(text, pattern = /\s+/) {
-    return (text + ' ').split(pattern);
+    const normalizedText = normalizeText(text);
+    return (normalizedText + ' ').split(pattern);
 }
 
 function createBigrams(tokens) {
