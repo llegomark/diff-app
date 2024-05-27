@@ -1,3 +1,5 @@
+const DEBOUNCE_DELAY = 300;
+
 function debounce(func, wait) {
     let timeout;
     return function (...args) {
@@ -41,13 +43,50 @@ function setInitialText() {
     input2.value = INITIAL_TEXT_2;
 }
 
-const diffCache = new Map();
+const MAX_CACHE_SIZE = 100;
+
+class LRUCache {
+    constructor(capacity) {
+        this.capacity = capacity;
+        this.cache = new Map();
+    }
+
+    get(key) {
+        if (!this.cache.has(key)) {
+            return undefined;
+        }
+
+        const value = this.cache.get(key);
+        this.cache.delete(key);
+        this.cache.set(key, value);
+
+        return value;
+    }
+
+    set(key, value) {
+        if (this.cache.has(key)) {
+            this.cache.delete(key);
+        } else if (this.cache.size >= this.capacity) {
+            const oldestKey = this.cache.keys().next().value;
+            this.cache.delete(oldestKey);
+        }
+
+        this.cache.set(key, value);
+    }
+}
+
+const diffCache = new LRUCache(MAX_CACHE_SIZE);
 
 let diffLibrary = null;
 
 async function loadDiffLibrary() {
     if (!diffLibrary) {
-        diffLibrary = await import('diff');
+        try {
+            diffLibrary = await import('diff');
+        } catch (error) {
+            console.error('Failed to load diff library:', error);
+            return null;
+        }
     }
     return diffLibrary;
 }
@@ -114,9 +153,9 @@ function generateDiffHTML(diff) {
     let diffHTML = '';
     diff.forEach((part) => {
         if (part.added) {
-            diffHTML += `<span class="added">${part.value}</span>`;
+            diffHTML += `<span class="added" role="text" aria-label="Added text">${part.value}</span>`;
         } else if (part.removed) {
-            diffHTML += `<span class="removed">${part.value}</span>`;
+            diffHTML += `<span class="removed" role="text" aria-label="Removed text">${part.value}</span>`;
         } else {
             diffHTML += part.value;
         }
@@ -167,6 +206,10 @@ function detectAIText(text) {
 
 async function performDiffAsync(input1Value, input2Value, diffType) {
     const diffLibrary = await loadDiffLibrary();
+    if (!diffLibrary) {
+        return { diffHTML: '', stats: {} };
+    }
+
     const diff = await calculateDiff(input1Value, input2Value, diffType, diffLibrary);
     const diffHTML = generateDiffHTML(diff);
     const { addedCount, removedCount, unchangedCount } = calculateDiffStats(diff);
@@ -238,7 +281,7 @@ async function performDiff() {
     const input2Value = input2.value;
 
     const cacheKey = `${diffType}-${input1Value}-${input2Value}`;
-    if (diffCache.has(cacheKey)) {
+    if (diffCache.get(cacheKey)) {
         const { diffHTML, stats } = diffCache.get(cacheKey);
         displayDiffResults(diffHTML);
         updateDiffStats(stats);
@@ -273,8 +316,8 @@ function updateCounts() {
     });
 }
 
-const debouncedPerformDiff = debounce(performDiff, 300);
-const debouncedUpdateCounts = debounce(updateCounts, 300);
+const debouncedPerformDiff = debounce(performDiff, DEBOUNCE_DELAY);
+const debouncedUpdateCounts = debounce(updateCounts, DEBOUNCE_DELAY);
 
 input1.addEventListener('input', () => {
     debouncedPerformDiff();
