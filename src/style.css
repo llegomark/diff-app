@@ -1,57 +1,251 @@
+/* Tailwind CSS v4 import */
 @import "tailwindcss";
 
-.added {
-  @apply bg-green-100 text-green-800 rounded px-1 py-0.5; /* Slightly subtler background */
+/* Neo Brutalism Theme */
+@theme {
+  /* Base colors */
+  --color-neo-bg: #fcf2d9;
+  --color-neo-accent: #ff5470;
+  --color-neo-primary: #00a2ff;
+  --color-neo-secondary: #ffd166;
+  --color-neo-dark: #111111;
+  
+  /* Added/Removed colors for diffs */
+  --color-neo-added: #06d6a0;
+  --color-neo-removed: #ef476f;
+  
+  /* Typography */
+  --font-display: "Arial Black", "Helvetica Neue", sans-serif;
+  --font-mono: "Courier New", monospace;
+  
+  /* Custom shadows */
+  --shadow-neo: 5px 5px 0px 0px var(--color-neo-dark);
+  --shadow-neo-sm: 3px 3px 0px 0px var(--color-neo-dark);
 }
 
-.removed {
-  @apply bg-red-100 text-red-800 rounded px-1 py-0.5 line-through; /* Added line-through */
+/* Neo Brutalism base styles */
+body {
+  background-color: var(--color-neo-bg);
+  font-family: var(--font-sans);
 }
 
-/* Ensure textareas and result box grow and scroll */
+/* Text area and result box styles - Removed rotation */
 textarea,
 .result-box {
-  @apply flex-grow overflow-auto resize-y; /* Allow vertical resize and scroll */
-  min-height: 150px; /* Minimum height */
+  flex-grow: 1;
+  overflow: auto;
+  resize: vertical;
+  border-width: 3px;
+  border-color: var(--color-neo-dark);
+  border-radius: 0;
+  min-height: 150px;
+  box-shadow: var(--shadow-neo);
+  transition: transform 0.1s ease;
+  width: 100%; /* Ensure full width */
+  position: relative; /* Ensure proper positioning */
+  transform: none; /* Remove any transforms */
 }
 
-/* Specific background colors */
+textarea:focus {
+  outline: none;
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0px 0px var(--color-neo-dark);
+}
+
+/* Input background colors - Removed rotations */
 #input1 {
-  @apply bg-slate-50;
+  background-color: white;
 }
 
 #input2 {
-  @apply bg-slate-100;
+  background-color: white;
 }
 
 #result {
-  @apply bg-white;
+  background-color: white;
+}
+
+/* Button styles */
+button {
+  border-width: 3px;
+  border-color: var(--color-neo-dark);
+  border-radius: 0;
+  font-weight: bold;
+  box-shadow: var(--shadow-neo-sm);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+button:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0px 0px var(--color-neo-dark);
+}
+
+button:active {
+  transform: translate(0px, 0px);
+  box-shadow: 0px 0px 0px 0px var(--color-neo-dark);
+}
+
+/* Radio button styling */
+input[type="radio"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
+  border-width: 2px;
+  border-color: var(--color-neo-dark);
+  appearance: none;
+  position: relative;
+}
+
+input[type="radio"]:checked {
+  background-color: var(--color-neo-primary);
+}
+
+input[type="radio"]:checked::after {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: white;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+input[type="radio"] + label {
+  font-size: 1.125rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Diff highlight styles */
+.added {
+  background-color: var(--color-neo-added);
+  color: white;
+  font-weight: bold;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+  border-radius: 0;
+  box-shadow: 2px 2px 0 var(--color-neo-dark);
+}
+
+.removed {
+  background-color: var(--color-neo-removed);
+  color: white;
+  font-weight: bold;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+  text-decoration: line-through;
+  border-radius: 0;
+  box-shadow: 2px 2px 0 var(--color-neo-dark);
+}
+
+/* Stats box styling */
+#diffStats > div {
+  border-width: 3px;
+  border-color: var(--color-neo-dark);
+  border-radius: 0;
+  box-shadow: var(--shadow-neo);
+  background-color: white;
+}
+
+/* Header styling */
+h1 {
+  font-family: var(--font-display);
+  font-size: 1.875rem;
+  letter-spacing: -0.5px;
 }
 
 /* Adjust grid layout for different screens */
 @media (min-width: 768px) { /* md breakpoint */
   main.grid {
-    /* Ensure columns can shrink if needed but prefer equal width */
-     grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+  
+  /* Fix for textareas in grid */
+  main.grid section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  main.grid textarea,
+  main.grid .result-box {
+    flex: 1;
+    min-height: 250px;
   }
 }
 
 @media (max-width: 767px) { /* Below md breakpoint */
   main.grid {
-     /* Stack columns on smaller screens */
-     grid-template-columns: 1fr;
-     grid-template-rows: auto auto auto; /* Let rows size automatically */
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
   }
   textarea,
   .result-box {
-    height: 200px; /* Give a bit more fixed height on mobile */
+    height: 200px;
     min-height: 150px;
   }
 }
 
-/* Styling for similarity link */
+/* Similarity link */
 .similarity-link {
-  @apply text-blue-600 hover:text-blue-800 underline font-medium;
+  color: var(--color-neo-primary);
+  text-decoration: underline;
+  font-weight: bold;
 }
 
-/* NO .hidden definition needed here */
+.similarity-link:hover {
+  color: var(--color-neo-dark);
+}
+
+/* Convert @utility to standard CSS classes */
+.neo-rotate-1 {
+  transform: rotate(1deg);
+}
+
+.neo-rotate-minus-1 {
+  transform: rotate(-1deg);
+}
+
+.container-neo {
+  margin-inline: auto;
+  padding-inline: 1rem;
+  padding-block: 2rem;
+  max-width: 72rem;
+  background-color: var(--color-neo-bg);
+}
+
+/* Hidden class (preserved from original) */
+.hidden {
+  display: none;
+}
+
+/* Footer styling */
+footer a {
+  text-decoration: underline;
+  font-weight: bold;
+  color: var(--color-neo-primary);
+}
+
+footer a:hover {
+  color: var(--color-neo-accent);
+}
+
+/* Make headers and UI elements keep rotation for style */
+.neo-header {
+  transform: rotate(-1deg);
+  display: inline-block;
+}
+
+/* Add some special styles to section headings without affecting textareas */
+.section-title {
+  display: inline-block;
+  transform: rotate(-1deg);
+  margin-bottom: 0.5rem;
+}

@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Diff App</title>
+  <title>Diff App - Neo Brutalism</title>
   <link rel="stylesheet" href="/src/style.css">
   <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
   <meta property="og:title" content="Diff App">
@@ -22,105 +22,107 @@
   <meta name="twitter:image" content="https://diff.llego.dev/images/7ddd03a7-ca69-4f85-a7cd-bf2283abce65.jpg">
 </head>
 
-<body>
-  <div class="container mx-auto px-4 py-6 min-h-screen flex flex-col">
-    <header class="mb-4">
-      <div class="flex justify-between items-center mb-2 flex-wrap">
-        <h1 class="text-2xl font-bold mr-4">Diff App</h1>
-        <div class="flex items-center space-x-2 flex-wrap">
-          <button id="swapButton" class="px-3 py-1 bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm rounded-sm cursor-pointer">Swap Inputs</button>
-          <button id="clearButton" class="px-3 py-1 bg-red-100 hover:bg-red-200 text-red-800 text-sm rounded-sm cursor-pointer">Clear Inputs</button>
+<body class="bg-neo-bg min-h-screen">
+  <div class="container-neo">
+    <header class="mb-8">
+      <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
+        <h1 class="text-3xl font-bold bg-neo-accent text-white py-2 px-4 inline-block neo-rotate-1 border-3 border-neo-dark">Diff App</h1>
+        <div class="flex items-center gap-3 flex-wrap">
+          <button id="swapButton" class="px-4 py-2 bg-neo-secondary text-neo-dark font-bold text-lg neo-rotate-1">Swap Inputs</button>
+          <button id="clearButton" class="px-4 py-2 bg-neo-removed text-white font-bold text-lg neo-rotate-minus-1">Clear Inputs</button>
         </div>
       </div>
-      <div class="flex flex-wrap items-center" role="radiogroup" aria-label="Diff Type">
-        <span class="mr-4 font-medium">Diff by:</span>
-        <div class="mr-4">
-          <input type="radio" id="diffChars" name="diff_type" value="diffChars" class="mr-1 cursor-pointer">
-          <label for="diffChars" class="cursor-pointer">Chars</label>
+      <div class="flex flex-wrap items-center gap-4 border-3 border-neo-dark p-4 bg-white" role="radiogroup" aria-label="Diff Type">
+        <span class="mr-4 font-bold text-xl">Diff by:</span>
+        <div class="mr-2">
+          <input type="radio" id="diffChars" name="diff_type" value="diffChars" class="mr-2 cursor-pointer">
+          <label for="diffChars" class="cursor-pointer font-bold">Chars</label>
         </div>
-        <div class="mr-4">
-          <input type="radio" id="diffWords" name="diff_type" value="diffWords" checked class="mr-1 cursor-pointer">
-          <label for="diffWords" class="cursor-pointer">Words</label>
+        <div class="mr-2">
+          <input type="radio" id="diffWords" name="diff_type" value="diffWords" checked class="mr-2 cursor-pointer">
+          <label for="diffWords" class="cursor-pointer font-bold">Words</label>
         </div>
-        <div class="mr-4">
-          <input type="radio" id="diffLines" name="diff_type" value="diffLines" class="mr-1 cursor-pointer">
-          <label for="diffLines" class="cursor-pointer">Lines</label>
+        <div class="mr-2">
+          <input type="radio" id="diffLines" name="diff_type" value="diffLines" class="mr-2 cursor-pointer">
+          <label for="diffLines" class="cursor-pointer font-bold">Lines</label>
         </div>
-         <div id="loadingIndicator" class="ml-auto text-sm text-gray-500 hidden">Calculating...</div>
+        <div id="loadingIndicator" class="ml-auto text-lg font-bold text-neo-primary hidden">Calculating...</div>
       </div>
     </header>
 
-    <main class="grid grid-cols-1 md:grid-cols-3 gap-4 flex-grow">
+    <main class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
       <section class="flex flex-col">
-        <h2 class="sr-only">Input 1</h2>
-        <textarea id="input1" class="w-full flex-grow p-2 border border-gray-300 rounded-sm font-mono text-sm"
+        <h2 class="font-bold text-xl mb-2 bg-neo-primary text-white inline-block py-1 px-3 border-3 border-neo-dark section-title">Input 1</h2>
+        <textarea id="input1" class="w-full flex-grow p-4 font-mono text-lg"
           aria-label="Input 1" placeholder="Paste original text here..."></textarea>
-        <div class="mt-1 text-sm text-gray-600">
-          <span id="input1CharCount">0 characters</span>, <span id="input1WordCount">0 words</span>
+        <div class="mt-2 text-lg font-bold">
+          <span id="input1CharCount" class="bg-neo-secondary px-2 py-0.5 border-2 border-neo-dark inline-block">0 characters</span>, 
+          <span id="input1WordCount" class="bg-neo-secondary px-2 py-0.5 border-2 border-neo-dark inline-block">0 words</span>
         </div>
       </section>
       <section class="flex flex-col">
-        <h2 class="sr-only">Input 2</h2>
-        <textarea id="input2" class="w-full flex-grow p-2 border border-gray-300 rounded-sm font-mono text-sm"
+        <h2 class="font-bold text-xl mb-2 bg-neo-primary text-white inline-block py-1 px-3 border-3 border-neo-dark section-title">Input 2</h2>
+        <textarea id="input2" class="w-full flex-grow p-4 font-mono text-lg"
           aria-label="Input 2" placeholder="Paste modified text here..."></textarea>
-        <div class="mt-1 text-sm text-gray-600">
-          <span id="input2CharCount">0 characters</span>, <span id="input2WordCount">0 words</span>
+        <div class="mt-2 text-lg font-bold">
+          <span id="input2CharCount" class="bg-neo-secondary px-2 py-0.5 border-2 border-neo-dark inline-block">0 characters</span>, 
+          <span id="input2WordCount" class="bg-neo-secondary px-2 py-0.5 border-2 border-neo-dark inline-block">0 words</span>
         </div>
       </section>
       <section class="flex flex-col">
-        <h2 class="sr-only">Diff Result</h2>
+        <h2 class="font-bold text-xl mb-2 bg-neo-primary text-white inline-block py-1 px-3 border-3 border-neo-dark section-title">Result</h2>
         <pre id="result"
-          class="w-full flex-grow result-box p-2 border border-gray-300 rounded-sm font-mono text-sm whitespace-pre-wrap"
+          class="w-full flex-grow result-box p-4 font-mono text-lg whitespace-pre-wrap"
           aria-live="polite"></pre>
       </section>
     </main>
 
-    <section id="diffStats" class="mt-4 mb-2 text-center">
-      <div class="inline-flex items-center bg-blue-50 text-blue-800 px-4 py-2 rounded-md flex-wrap justify-center">
-        <div class="mr-4 text-center mb-2 md:mb-0">
-          <p class="text-xl font-bold" id="similarityPercentage">0%</p>
-          <p class="text-sm">Similarity</p>
+    <section id="diffStats" class="mb-8 text-center">
+      <div class="inline-flex items-center p-6 flex-wrap justify-center gap-6 max-w-md mx-auto w-full">
+        <div class="text-center">
+          <p class="text-3xl font-bold bg-neo-primary text-white px-3 py-1 border-3 border-neo-dark neo-rotate-1" id="similarityPercentage">0%</p>
+          <p class="text-lg font-bold mt-1">Similarity</p>
         </div>
-        <div class="grid grid-cols-2 gap-x-4 gap-y-2">
+        <div class="grid grid-cols-2 gap-4">
           <div class="text-center">
-            <p class="text-lg font-bold text-green-700" id="addedCount">0</p>
-            <p class="text-sm">Added</p>
+            <p class="text-2xl font-bold bg-neo-added text-white px-3 py-1 border-3 border-neo-dark neo-rotate-minus-1" id="addedCount">0</p>
+            <p class="text-lg font-bold mt-1">Added</p>
           </div>
           <div class="text-center">
-            <p class="text-lg font-bold text-red-700" id="removedCount">0</p>
-            <p class="text-sm">Removed</p>
+            <p class="text-2xl font-bold bg-neo-removed text-white px-3 py-1 border-3 border-neo-dark neo-rotate-1" id="removedCount">0</p>
+            <p class="text-lg font-bold mt-1">Removed</p>
           </div>
           <div class="text-center">
-            <p class="text-lg font-bold" id="unchangedCount">0</p>
-            <p class="text-sm">Unchanged</p>
+            <p class="text-2xl font-bold bg-white px-3 py-1 border-3 border-neo-dark neo-rotate-minus-1" id="unchangedCount">0</p>
+            <p class="text-lg font-bold mt-1">Unchanged</p>
           </div>
           <div class="text-center">
-            <p class="text-lg font-bold" id="totalCount">0</p>
-            <p class="text-sm">Total Parts</p>
+            <p class="text-2xl font-bold bg-white px-3 py-1 border-3 border-neo-dark neo-rotate-1" id="totalCount">0</p>
+            <p class="text-lg font-bold mt-1">Total Parts</p>
           </div>
         </div>
       </div>
-      <div id="aiKeywordsMessage1" class="mt-4 p-3 bg-slate-50 text-slate-800 rounded-sm hidden text-left max-w-md mx-auto">
-        <p class="text-sm font-medium">Input 1 contains keywords sometimes associated with AI generation.</p>
-        <p class="text-xs text-slate-600">Keywords found: <span id="aiKeywords1" class="font-mono"></span></p>
+      <div id="aiKeywordsMessage1" class="mt-4 p-4 border-3 border-neo-dark bg-white text-left max-w-md mx-auto hidden">
+        <p class="text-lg font-bold">Input 1 contains AI keywords</p>
+        <p class="font-mono border-2 border-neo-dark p-2 mt-2 bg-neo-bg"><span id="aiKeywords1"></span></p>
       </div>
-      <div id="aiKeywordsMessage2" class="mt-2 p-3 bg-slate-50 text-slate-800 rounded-sm hidden text-left max-w-md mx-auto">
-        <p class="text-sm font-medium">Input 2 contains keywords sometimes associated with AI generation.</p>
-        <p class="text-xs text-slate-600">Keywords found: <span id="aiKeywords2" class="font-mono"></span></p>
+      <div id="aiKeywordsMessage2" class="mt-4 p-4 border-3 border-neo-dark bg-white text-left max-w-md mx-auto hidden">
+        <p class="text-lg font-bold">Input 2 contains AI keywords</p>
+        <p class="font-mono border-2 border-neo-dark p-2 mt-2 bg-neo-bg"><span id="aiKeywords2"></span></p>
       </div>
-      <div id="similarityMessage" class="mt-2 text-sm text-blue-600 hidden similarity-link cursor-pointer"></div>
+      <div id="similarityMessage" class="mt-4 text-lg font-bold similarity-link cursor-pointer p-2 bg-white border-2 border-neo-dark inline-block"></div>
     </section>
 
-    <footer class="mt-4 mb-2 text-center text-gray-500 text-sm">
-      <div class="mb-2">
-        © <span id="currentYear">2025</span> <!-- Year will be updated by JS -->
+    <footer class="mt-8 mb-4 text-center text-lg border-t-3 border-neo-dark pt-4">
+      <div class="mb-3">
+        © <span id="currentYear">2025</span>
         <a href="https://llego.dev/" target="_blank" rel="noopener noreferrer"
-          class="text-blue-700 hover:underline hover:text-blue-500 cursor-pointer">Mark Anthony Llego</a>
+          class="px-2 py-0.5">Mark Anthony Llego</a>
       </div>
       <div>
         <a href="https://github.com/llegomark/diff-app" target="_blank" rel="noopener noreferrer"
-          class="inline-flex items-center text-gray-700 hover:text-gray-500 cursor-pointer">
-          <svg class="w-5 h-5 mr-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="GitHub icon">
+          class="inline-flex items-center gap-2 bg-white px-3 py-2 border-2 border-neo-dark">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="GitHub icon">
             <title>GitHub</title>
             <path
               d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"

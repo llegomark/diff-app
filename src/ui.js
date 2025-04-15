@@ -123,15 +123,20 @@ export function updateDiffStats(stats, error = null) {
     const aiKeywords1 = safeGet('aiKeywords1', []);
     const aiKeywords2 = safeGet('aiKeywords2', []);
 
+    // Get input text for empty check
+    const input1Value = elements.input1?.value || '';
+    const input2Value = elements.input2?.value || '';
+    const bothInputsEmpty = input1Value.trim() === '' && input2Value.trim() === '';
+
     if (elements.addedCount) elements.addedCount.textContent = addedCount.toString();
     if (elements.removedCount) elements.removedCount.textContent = removedCount.toString();
     if (elements.unchangedCount) elements.unchangedCount.textContent = unchangedCount.toString();
     if (elements.totalCount) elements.totalCount.textContent = totalCount.toString();
     if (elements.similarityPercentage) elements.similarityPercentage.textContent = `${similarityPercentage}%`;
 
-    // Similarity Message
+    // Similarity Message - Hide when both inputs are empty
     if (elements.similarityMessage) {
-        if (!error && stats && similarityScore >= SIMILARITY_THRESHOLD) {
+        if (!error && stats && similarityScore >= SIMILARITY_THRESHOLD && !bothInputsEmpty) {
             elements.similarityMessage.innerHTML = `Texts are highly similar (${similarityPercentage}%) based on the <a href="https://en.wikipedia.org/wiki/Dice%E2%80%93S%C3%B8rensen_coefficient" target="_blank" rel="noopener noreferrer" class="similarity-link">Dice-Sørensen coefficient</a>.`;
             elements.similarityMessage.classList.remove(HIDDEN_CLASS);
         } else {
